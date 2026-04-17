@@ -87,21 +87,67 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "ride-request-service:ci"
-          format: "table"
-          exit-code: "1"
+          format: "json"
+          output: "trivy-ride-request.json"
+          exit-code: "0"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL"
+
+        - name: Enforce CRITICAL gate (Ride Request)
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+
+          with open("trivy-ride-request.json", "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+
+          critical = 0
+          for result in data.get("Results", []):
+            for vuln in result.get("Vulnerabilities", []) or []:
+              if vuln.get("Severity") == "CRITICAL":
+                critical += 1
+
+          if critical:
+            print(f"CRITICAL vulnerabilities detected: {critical}")
+            sys.exit(1)
+
+          print("No CRITICAL vulnerabilities found.")
+          PY
 
       - name: Trivy image scan (Matching)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "matching-service:ci"
-          format: "table"
-          exit-code: "1"
+          format: "json"
+          output: "trivy-matching.json"
+          exit-code: "0"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL"
+
+        - name: Enforce CRITICAL gate (Matching)
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+
+          with open("trivy-matching.json", "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+
+          critical = 0
+          for result in data.get("Results", []):
+            for vuln in result.get("Vulnerabilities", []) or []:
+              if vuln.get("Severity") == "CRITICAL":
+                critical += 1
+
+          if critical:
+            print(f"CRITICAL vulnerabilities detected: {critical}")
+            sys.exit(1)
+
+          print("No CRITICAL vulnerabilities found.")
+          PY
 
       - name: Log in to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
