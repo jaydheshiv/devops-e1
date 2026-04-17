@@ -54,3 +54,6 @@ We will add:
 - Terraform to provision a managed Kubernetes cluster
 - Argo CD to sync manifests
 - Prometheus + Grafana for monitoring
+
+## Terraform (DigitalOcean)
+See [terraform/README.md](terraform/README.md) for cluster provisioning steps.

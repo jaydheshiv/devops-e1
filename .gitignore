@@ -17,6 +17,9 @@ venv/
 crash.log
 crash.*.log
 *.tfvars
+*.tfstate
+*.tfstate.*
+kubeconfig.yaml
 
 # OS/Editor
 .DS_Store
