@@ -84,7 +84,7 @@ jobs:
           docker build --target runtime -t matching-service:ci -f matching-service/Dockerfile matching-service
 
       - name: Trivy image scan (Ride Request)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: "ride-request-service:ci"
           format: "table"
@@ -94,7 +94,7 @@ jobs:
           severity: "CRITICAL,HIGH"
 
       - name: Trivy image scan (Matching)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: "matching-service:ci"
           format: "table"
