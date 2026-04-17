@@ -57,3 +57,6 @@ We will add:
 
 ## Terraform (DigitalOcean)
 See [terraform/README.md](terraform/README.md) for cluster provisioning steps.
+
+## Terraform (Local Kind)
+See [terraform-local/README.md](terraform-local/README.md) for local cluster steps.
