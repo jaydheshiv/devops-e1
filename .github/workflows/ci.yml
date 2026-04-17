@@ -38,7 +38,34 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pip-audit
-          pip-audit -r requirements-dev.txt --severity high
+          pip-audit -r requirements-dev.txt -f json -o pip-audit.json
+          python - <<'PY'
+          import json
+          import sys
+
+          threshold = 7.0
+          with open("pip-audit.json", "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+
+          findings = data.get("dependencies", [])
+          high = []
+
+          for dep in findings:
+            for vuln in dep.get("vulns", []):
+              severities = vuln.get("severity", []) or []
+              for entry in severities:
+                score = entry.get("score")
+                if score is not None and score >= threshold:
+                  high.append((dep.get("name"), vuln.get("id"), score))
+
+          if high:
+            print("High/Critical vulnerabilities detected:")
+            for name, vid, score in high:
+              print(f"- {name} {vid} (score {score})")
+            sys.exit(1)
+
+          print("No high/critical vulnerabilities found.")
+          PY
 
   docker-and-scan:
     runs-on: ubuntu-latest
